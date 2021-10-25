@@ -26,7 +26,7 @@ temp = [] #initiating a list
 for i in range(0, row_length):
 #insert the scrapping process here
     
-	# get period
+    # get period
     period = soup.find_all('th',attrs={'class':'font-semibold text-center'})[i].text
     period = period.strip('\n')
     
@@ -45,38 +45,38 @@ for i in range(0, row_length):
     # get Close
     Close = soup.find_all('td',attrs={'class':'text-center'})[i*4+3].text
     Close = Close.strip('\n')
-
-    temp.append((period,MarketCap,Volume,Open,Close)) 
+    
+    #scrapping process
+    temp.append((period,Volume))
+	
 
 temp = temp[::-1]
 
 #change into dataframe
-df = pd.DataFrame(temp,columns = ('period','MarketCap','Volume','Open','Close'))
+#df = pd.DataFrame(temp,columns = ('period','MarketCap','Volume','Open','Close'))
+df = pd.DataFrame(temp,columns = ('period','Volume'))
 
 #insert data wrangling here
 df['period'] = df['period'].astype('datetime64')
 
-df['MarketCap'] = df['MarketCap'].str.replace("$","")
-df['MarketCap'] = df['MarketCap'].str.replace(",","")
-df['MarketCap'] = df['MarketCap'].astype('float64')
-
+#df['MarketCap'] = df['MarketCap'].str.replace("$","")
+#df['MarketCap'] = df['MarketCap'].str.replace(",","")
+#df['MarketCap'] = df['MarketCap'].astype('float64')
 
 df['Volume'] = df['Volume'].str.replace("$","")
 df['Volume'] = df['Volume'].str.replace(",","")
 df['Volume'] = df['Volume'].astype('float64')
 
 
-df['Open'] = df['Open'].str.replace("$","")
-df['Open'] = df['Open'].str.replace(",","")
-df['Open'] = df['Open'].astype('float64')
+#df['Open'] = df['Open'].str.replace("$","")
+#df['Open'] = df['Open'].str.replace(",","")
+#df['Open'] = df['Open'].astype('float64')
 
-df['Close'] = df['Close'].str.replace("$","")
-df['Close'] = df['Close'].str.replace(",","")
-df['Close'] = df['Close'].str.replace("N/A","2169.40")
-df['Close'] = df['Close'].astype('float64')
-
-df = df.set_index('period')
-
+#df['Close'] = df['Close'].str.replace("$","")
+#df['Close'] = df['Close'].str.replace(",","")
+#df['Close'] = df['Close'].str.replace("N/A","2169.40")
+#df['Close'] = df['Close'].astype('float64')
+df=df.set_index('period')
 #end of data wranggling 
 
 @app.route("/")
@@ -85,7 +85,7 @@ def index():
 	card_data = f'{df["Volume"].mean().round(2)}' #be careful with the " and ' 
 
 	# generate plot
-	ax = card_data.plot(figsize = (20,9)) 
+	ax = df.plot(figsize = (20,9)) 
 	
 	# Rendering plot
 	# Do not change this
